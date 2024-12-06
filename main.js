@@ -1,17 +1,25 @@
+// importovani gemini-ai a markdown-it
+
 import { GoogleGenerativeAI, HarmBlockThreshold, HarmCategory } from "@google/generative-ai";
 import MarkdownIt from 'markdown-it'
 import './style.css';
 
+//napojeni na gemini pomoci api klice
 let API_KEY = 'AIzaSyA4KnUunCCgKrtU665Oe2YK0yu1T5D9eA8';
 
+//nastaveni html atributu
 let form = document.querySelector('form');
 let promptInput = document.querySelector('input[name="prompt"]');
 let output = document.querySelector('.output');
 
+
+// po zmacknuti tlacitka se objevi tento text
 form.onsubmit = async (ev) => {
     ev.preventDefault();
     output.textContent = 'Generuji...';
 
+
+    // fileinput na obrazek
     try {
     const fileInput = document.getElementById('fileInput');
     const file = fileInput.files[0];
@@ -36,6 +44,7 @@ form.onsubmit = async (ev) => {
       }
     ];
 
+        // zavolani gemini modelu a zvoleni + harmreduction pro nevhodne veci
     const genAI = new GoogleGenerativeAI(API_KEY);
     const model = genAI.getGenerativeModel({
       model: "gemini-1.5-pro",
@@ -49,6 +58,8 @@ form.onsubmit = async (ev) => {
 
     const result = await model.generateContentStream({ contents });
 
+        //odpoved do html
+        
     let buffer = [];
     let md = new MarkdownIt();
     for await (let response of result.stream) {
